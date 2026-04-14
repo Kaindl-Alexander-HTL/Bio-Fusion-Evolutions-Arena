@@ -61,10 +61,13 @@ function EnemyBot.Spawn(arenaCenter: Vector3, onBotDied: () -> ()): () -> ()
 
 	CreatureBuilder.Assemble(BOT_DNA, model)
 
-	-- Position bot's torso at arenaCenter + offset so it's not on top of player
-	local torso = model:FindFirstChild("BotTorso") :: BasePart?
+	-- Position bot into the arena (CreatureBuilder always names it "Torso")
+	local torso = model:FindFirstChild("Torso") :: BasePart?
 	if torso then
-		torso.CFrame = CFrame.new(arenaCenter + Vector3.new(0, 0, 18))
+		torso.Anchored = true
+		torso.CFrame = CFrame.new(arenaCenter + Vector3.new(0, 2, 18))
+		task.wait()
+		torso.Anchored = false
 	end
 
 	-- Track whether the death callback has already fired
@@ -88,7 +91,7 @@ function EnemyBot.Spawn(arenaCenter: Vector3, onBotDied: () -> ()): () -> ()
 		if frameCount % AI_FRAMES ~= 0 then return end
 		if died then return end
 
-		local botTorso = model:FindFirstChild("BotTorso") :: BasePart?
+		local botTorso = model:FindFirstChild("Torso") :: BasePart?
 		if not botTorso then return end
 
 		-- Find nearest Creature_* that is not us and has OwnerID != 0

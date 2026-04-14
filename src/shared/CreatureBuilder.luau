@@ -39,6 +39,25 @@ local PART_TAG: string = "BioFusion_CreaturePart"
 -- Internal helpers
 -- ─────────────────────────────────────────────
 
+-- Part visual config per PartType
+local PART_VISUALS: {[string]: {size: Vector3, color: Color3, material: Enum.Material}} = {
+	Armor = {
+		size     = Vector3.new(2.2, 0.5, 2.2),
+		color    = Color3.fromRGB(220, 110, 40),
+		material = Enum.Material.Neon,
+	},
+	Wing = {
+		size     = Vector3.new(2.6, 0.25, 1.0),
+		color    = Color3.fromRGB(60, 160, 240),
+		material = Enum.Material.Neon,
+	},
+	Limb = {
+		size     = Vector3.new(0.7, 1.8, 0.7),
+		color    = Color3.fromRGB(60, 210, 110),
+		material = Enum.Material.SmoothPlastic,
+	},
+}
+
 -- Returns the Torso BasePart inside parent, creating it if absent.
 local function ensureTorso(parent: Model, torsoID: string): BasePart
 	local existing = parent:FindFirstChild("Torso")
@@ -46,9 +65,10 @@ local function ensureTorso(parent: Model, torsoID: string): BasePart
 		return existing :: BasePart
 	end
 	local torso = Instance.new("Part")
-	torso.Name = "Torso"
-	torso.Size = Vector3.new(2, 2, 1)
-	torso.BrickColor = BrickColor.new("Medium stone grey")
+	torso.Name     = "Torso"
+	torso.Size     = Vector3.new(2, 2, 1)
+	torso.Color    = Color3.fromRGB(160, 80, 200)
+	torso.Material = Enum.Material.Neon
 	torso:SetAttribute("TorsoID", torsoID)
 	torso.Parent = parent
 	return torso
@@ -151,8 +171,15 @@ function CreatureBuilder.Assemble(dna: CreatureDNA, parent: Model): Model
 
 		local part = Instance.new("Part")
 		part.Name = dnaPart.PartID
-		-- Size is uniform for now; extend with asset lookup or Stats-driven sizing later
-		part.Size = Vector3.new(1, 1, 1)
+		-- Size, color and material depend on PartType
+		local vis = PART_VISUALS[dnaPart.PartType]
+		if vis then
+			part.Size     = vis.size
+			part.Color    = vis.color
+			part.Material = vis.material
+		else
+			part.Size = Vector3.new(1, 1, 1)
+		end
 
 		-- Position and orient relative to torso
 		local offsetCF = CFrame.new(

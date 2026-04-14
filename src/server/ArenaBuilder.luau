@@ -67,15 +67,40 @@ end
 
 function ArenaBuilder.Build(onEnterPad: (Player) -> (), onExitPad: (Player) -> ()): ()
 
-	-- Arena floor
+	-- Arena floor (dark base)
 	mkPart(
 		"ArenaFloor",
 		Vector3.new(60, 2, 60),
 		Vector3.new(0, 20, 0),
-		Color3.fromRGB(15, 5, 30),
-		Enum.Material.Neon,
+		Color3.fromRGB(12, 8, 22),
+		Enum.Material.SmoothPlastic,
 		true, true, 0
 	)
+
+	-- Neon edge strips along all 4 sides (glowing border)
+	local STRIP_COLOR = Color3.fromRGB(140, 0, 255)
+	mkPart("ArenaEdge_N", Vector3.new(60, 0.4, 0.4), Vector3.new(0, 21.2, -30),  STRIP_COLOR, Enum.Material.Neon, true, false, 0)
+	mkPart("ArenaEdge_S", Vector3.new(60, 0.4, 0.4), Vector3.new(0, 21.2,  30),  STRIP_COLOR, Enum.Material.Neon, true, false, 0)
+	mkPart("ArenaEdge_W", Vector3.new(0.4, 0.4, 60), Vector3.new(-30, 21.2, 0),  STRIP_COLOR, Enum.Material.Neon, true, false, 0)
+	mkPart("ArenaEdge_E", Vector3.new(0.4, 0.4, 60), Vector3.new( 30, 21.2, 0),  STRIP_COLOR, Enum.Material.Neon, true, false, 0)
+
+	-- Neon cross lines across the floor (arena grid feel)
+	local LINE_COLOR = Color3.fromRGB(60, 0, 100)
+	mkPart("ArenaLine_X", Vector3.new(60, 0.1, 0.5), Vector3.new(0, 21.05, 0), LINE_COLOR, Enum.Material.Neon, true, false, 0)
+	mkPart("ArenaLine_Z", Vector3.new(0.5, 0.1, 60), Vector3.new(0, 21.05, 0), LINE_COLOR, Enum.Material.Neon, true, false, 0)
+
+	-- Center circle indicator (glowing ring ring approximated as a flat disc)
+	mkPart("ArenaCenter", Vector3.new(8, 0.15, 8), Vector3.new(0, 21.08, 0),
+		Color3.fromRGB(180, 0, 255), Enum.Material.Neon, true, false, 0)
+
+	-- Corner pillars (4 corners, purely visual)
+	local PILLAR_COLOR = Color3.fromRGB(100, 0, 180)
+	for _, cx in {-28, 28} do
+		for _, cz in {-28, 28} do
+			mkPart("ArenaPillar", Vector3.new(2, 10, 2), Vector3.new(cx, 26, cz),
+				PILLAR_COLOR, Enum.Material.Neon, true, false, 0)
+		end
+	end
 
 	-- Invisible walls (keep creatures inside)
 	local wallColor = Color3.fromRGB(15, 5, 30)
