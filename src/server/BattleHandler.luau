@@ -1,3 +1,4 @@
+
 --!strict
 -- BattleHandler.luau
 -- Server-side combat resolution.
